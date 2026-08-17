@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLE-mate</title>
+<style>
+:root{--bg:#f6f3ee;--card:#fffdf9;--ink:#302e2a;--muted:#817c73;--line:#e5dfd5;--accent:#756b5c;--shadow:0 8px 24px rgba(45,40,32,.07);--radius:18px}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit} button{cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:11px;padding:9px 12px} button:hover{transform:translateY(-1px)}
+.app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}.sidebar{padding:24px 16px;border-right:1px solid var(--line);background:#fbf9f5;position:sticky;top:0;height:100vh}
+.logo{font-size:22px;font-weight:800;padding:8px 10px 22px}.logo span{font-weight:400;color:var(--muted)}
+.nav button{width:100%;text-align:left;border:0;background:transparent;margin:3px 0}.nav button.active{background:#ece7de;font-weight:700}
+.small{font-size:12px;color:var(--muted)} .sidebar-bottom{position:absolute;bottom:18px;left:16px;right:16px}.content{padding:28px;max-width:1500px;width:100%;margin:auto}
+.page{display:none}.page.active{display:block}.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}.page-head h1{margin:0 0 5px;font-size:30px}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(330px,.85fr);gap:18px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}.card h2,.card h3{margin:0 0 12px}.muted{color:var(--muted)}
+.stat{font-size:30px;font-weight:800}.kpi{display:flex;justify-content:space-between;align-items:flex-end}.progress{height:8px;background:#eee9e1;border-radius:99px;overflow:hidden;margin-top:10px}.progress>i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.subject{border:1px solid var(--line);border-radius:14px;padding:12px;margin:9px 0;background:#fff}.subject-top{display:flex;justify-content:space-between;gap:10px}.subject-name{font-weight:750}.chips{display:flex;gap:5px;flex-wrap:wrap}.chip{font-size:11px;padding:4px 7px;border-radius:99px;background:#eee9e1}.priority{background:#e5ddd0}.subject-meta{display:flex;justify-content:space-between;margin-top:7px;font-size:12px;color:var(--muted)}
+.chat{height:620px;display:flex;flex-direction:column}.messages{flex:1;overflow:auto;padding-right:4px}.msg{max-width:88%;padding:10px 12px;border-radius:14px;margin:8px 0;white-space:pre-wrap;line-height:1.45}.msg.you{margin-left:auto;background:#e8e2d8}.msg.mate{background:#f1eee8}.chatbox{border-top:1px solid var(--line);padding-top:12px}.chatbox textarea{width:100%;resize:none;min-height:72px;border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff}.chat-actions{display:flex;justify-content:space-between;gap:8px;margin-top:8px}
+.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:left;padding:10px;border-bottom:1px solid var(--line);font-size:13px}
+.bar-chart{height:170px;display:flex;align-items:flex-end;gap:10px;padding:10px 4px 25px}.bar{flex:1;background:#c8c0b4;border-radius:7px 7px 2px 2px;position:relative;min-width:12px}.bar b{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:10px}.bar span{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--muted)}
+.board{min-height:560px;background:#d7c3a5;border-radius:18px;padding:24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;background-image:radial-gradient(#b9a485 1px,transparent 1px);background-size:18px 18px}.note{background:#fff3a9;padding:18px;min-height:150px;box-shadow:0 7px 12px rgba(0,0,0,.14);transform:rotate(-1deg);position:relative}.note:nth-child(3n){transform:rotate(1.5deg)}.note:nth-child(4n){transform:rotate(-2deg)}.note small{display:block;color:#7e755e;margin-top:14px}.note .del{position:absolute;right:6px;top:4px;border:0;background:transparent;padding:3px}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}.cal-head,.day{padding:9px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}.cal-head{font-size:11px;color:var(--muted);font-weight:700}.day{min-height:115px}.day.today{background:#f0ece5}.day-num{font-weight:700;font-size:12px}.event{font-size:10px;background:#e7e1d7;border-radius:6px;padding:4px;margin-top:5px;overflow:hidden}
+.modal{position:fixed;inset:0;background:rgba(30,28,24,.38);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}.modal.open{display:flex}.modalbox{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;width:min(560px,100%);max-height:90vh;overflow:auto}.form{display:grid;gap:11px}.form label{font-size:12px;color:var(--muted)}.form input,.form select,.form textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:white}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
+.settings-row{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding:12px 0}.toggle{min-width:54px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}.sidebar-bottom{position:static;margin-top:18px}.grid2,.grid3{grid-template-columns:1fr}.content{padding:16px}.calendar{font-size:10px}.day{min-height:85px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo">PLE<span>-mate</span></div>
+  <nav class="nav">
+    <button data-page="dashboard" class="active">🏠 Dashboard</button>
+    <button data-page="calendar">📅 Calendar</button>
+    <button data-page="progress">📊 Progress</button>
+    <button data-page="corkboard">📌 Corkboard</button>
+    <button data-page="subjects">📚 Subjects</button>
+    <button data-page="settings">⚙️ Settings</button>
+  </nav>
+  <div class="sidebar-bottom small">Free-first • Your data stays in this browser</div>
+</aside>
+
+<main class="content">
+<section id="dashboard" class="page active">
+ <div class="page-head"><div><h1>Good luck, future MD. ✨</h1><div class="muted">Your PLE command center</div></div><div class="actions"><button onclick="openSubject()">+ Subject</button><button onclick="exportData()">Export backup</button></div></div>
+ <div class="grid2">
+  <div>
+   <div class="grid3">
+    <div class="card"><div class="small">PLE countdown</div><div id="countdown" class="stat">—</div><div id="countdownDate" class="small"></div></div>
+    <div class="card"><div class="small">Hours studied</div><div id="totalStudied" class="stat">0h</div><div class="small">all subjects</div></div>
+    <div class="card"><div class="small">Hours remaining</div><div id="totalRemaining" class="stat">0h</div><div class="small">planned minus studied</div></div>
+   </div>
+   <div class="card" style="margin-top:14px"><div class="kpi"><h2>Subject tracker</h2><button onclick="go('subjects')">Manage</button></div><div id="dashboardSubjects"></div></div>
+   <div class="card" style="margin-top:14px"><h2>Weekly study hours</h2><div id="dashChart" class="bar-chart"></div></div>
+  </div>
+  <div>
+   <div class="card chat">
+    <div><h2>💬 PLE-mate</h2><div class="small">Use ChatGPT as the brain; this page stores your PLE data locally.</div></div>
+    <div id="messages" class="messages"></div>
+    <div class="chatbox">
+      <textarea id="chatInput" placeholder="Ask ChatGPT for study advice, then bring changes back here using Apply Change…"></textarea>
+      <div class="chat-actions"><button onclick="openApply()">⚙️ Apply a PLE-mate change</button><button onclick="openChatGPT()">Open ChatGPT ↗</button></div>
+    </div>
+   </div>
+   <div class="card" style="margin-top:14px"><h2>📌 Saved advice</h2><div id="pinsPreview"></div></div>
+  </div>
+ </div>
+</section>
+
+<section id="calendar" class="page">
+ <div class="page-head"><div><h1>📅 Calendar</h1><div class="muted">A study-friendly calendar. You can import a Google Calendar ICS feed without giving the site your Google password.</div></div><div class="actions"><button onclick="openCalendarImport()">Import ICS</button><button onclick="addEvent()">+ Event</button></div></div>
+ <div class="card"><div class="actions" style="justify-content:space-between"><button onclick="changeMonth(-1)">←</button><h2 id="monthTitle" style="margin:0"></h2><button onclick="changeMonth(1)">→</button></div><div id="calendarGrid" class="calendar" style="margin-top:14px"></div></div>
+ <div class="card" style="margin-top:14px"><h3>Google Calendar note</h3><p class="muted">For a private Google Calendar, use the official Google Calendar sharing/export options to obtain an ICS feed or export file. We will not store your Google password or OAuth credentials in this static app.</p></div>
+</section>
+
+<section id="progress" class="page">
+ <div class="page-head"><div><h1>📊 Detailed progress</h1><div class="muted">Everything comes from the same subject and study-session data.</div></div></div>
+ <div class="grid3">
+  <div class="card"><div class="small">Overall completion</div><div id="overallPct" class="stat">0%</div><div class="progress"><i id="overallBar" style="width:0%"></i></div></div>
+  <div class="card"><div class="small">Study sessions</div><div id="sessionCount" class="stat">0</div></div>
+  <div class="card"><div class="small">Subjects completed</div><div id="completedCount" class="stat">0</div></div>
+ </div>
+ <div class="card" style="margin-top:14px"><h2>Subject breakdown</h2><div id="progressTable"></div></div>
+ <div class="card" style="margin-top:14px"><h2>Study history — last 7 days</h2><div id="progressChart" class="bar-chart"></div></div>
+</section>
+
+<section id="corkboard" class="page">
+ <div class="page-head"><div><h1>📌 Corkboard</h1><div class="muted">Motivational quotes, reminders, screenshots converted to text, and little notes to future you.</div></div><button onclick="openNote()">+ Add note</button></div>
+ <div id="board" class="board"></div>
+</section>
+
+<section id="subjects" class="page">
+ <div class="page-head"><div><h1>📚 Subjects</h1><div class="muted">Add, edit, remove, prioritize, and log study time.</div></div><button onclick="openSubject()">+ Add subject</button></div>
+ <div class="card"><div id="subjectsFull"></div></div>
+</section>
+
+<section id="settings" class="page">
+ <div class="page-head"><div><h1>⚙️ Settings</h1><div class="muted">Customize PLE-mate and protect your data with backups.</div></div></div>
+ <div class="card">
+  <div class="settings-row"><div><b>PLE date</b><div class="small">Used by the countdown.</div></div><button onclick="openSettings()">Change</button></div>
+  <div class="settings-row"><div><b>Export all data</b><div class="small">Save a JSON backup to your computer.</div></div><button onclick="exportData()">Export</button></div>
+  <div class="settings-row"><div><b>Import backup</b><div class="small">Restore a previous PLE-mate JSON backup.</div></div><button onclick="document.getElementById('fileImport').click()">Import</button></div>
+  <div class="settings-row"><div><b>Reset local data</b><div class="small">This permanently clears this browser's PLE-mate data.</div></div><button onclick="resetData()">Reset</button></div>
+ </div>
+ <input id="fileImport" type="file" accept=".json" hidden onchange="importData(event)">
+</section>
+</main>
+</div>
+
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="modalbox" id="modalBox"></div></div>
+
+<script>
+const KEY="pleMateFreeV1";
+let state=JSON.parse(localStorage.getItem(KEY)||"null")||{
+  pleDate:"2026-11-01T08:00",
+  subjects:[
+    {id:crypto.randomUUID(),name:"Medicine",hours:40,studied:0,priority:true},
+    {id:crypto.randomUUID(),name:"Surgery",hours:30,studied:0,priority:false},
+    {id:crypto.randomUUID(),name:"Pediatrics",hours:25,studied:0,priority:false},
+    {id:crypto.randomUUID(),name:"OB-GYN",hours:25,studied:0,priority:false}
+  ],
+  sessions:[],pins:[],notes:[],events:[],settings:{showHours:true,compact:false},chat:[]
+};
+function save(){localStorage.setItem(KEY,JSON.stringify(state));renderAll()}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function go(page){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById(page).classList.add("active");document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.page===page));history.replaceState(null,"","#"+page);renderAll()}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>go(b.dataset.page));
+function remaining(s){return Math.max(0,Number(s.hours||0)-Number(s.studied||0))}
+function totalHours(){return state.subjects.reduce((a,s)=>a+Number(s.hours||0),0)}
+function totalStudied(){return state.subjects.reduce((a,s)=>a+Number(s.studied||0),0)}
+function pct(s){return s.hours?Math.min(100,Math.round(s.studied/s.hours*100)):0}
+function openModal(html){document.getElementById("modalBox").innerHTML=html;document.getElementById("modal").classList.add("open")}
+function closeModal(){document.getElementById("modal").classList.remove("open")}
+function openSubject(id){
+ let s=state.subjects.find(x=>x.id===id);
+ openModal(`<h2>${s?"Edit":"Add"} subject</h2><div class="form">
+ <div><label>Subject</label><input id="fName" value="${esc(s?.name||"")}"></div>
+ <div class="form-row"><div><label>Total planned study hours</label><input id="fHours" type="number" min="0" step=".5" value="${s?.hours??""}"></div><div><label>Hours already studied</label><input id="fStudied" type="number" min="0" step=".5" value="${s?.studied??0}"></div></div>
+ <label><input id="fPriority" type="checkbox" ${s?.priority?"checked":""}> Priority subject</label>
+ </div><div class="modal-actions"><button onclick="closeModal()">Cancel</button><button onclick="saveSubject('${id||""}')">Save</button></div>`)
+}
+function saveSubject(id){let name=document.getElementById("fName").value.trim();if(!name)return alert("Please enter a subject.");let obj={id:id||crypto.randomUUID(),name,hours:Number(document.getElementById("fHours").value||0),studied:Number(document.getElementById("fStudied").value||0),priority:document.getElementById("fPriority").checked};if(id){let i=state.subjects.findIndex(x=>x.id===id);state.subjects[i]=obj}else state.subjects.push(obj);closeModal();save()}
+function logHours(id){let s=state.subjects.find(x=>x.id===id);openModal(`<h2>Log study time</h2><p><b>${esc(s.name)}</b> — ${remaining(s)}h remaining</p><div class="form"><div><label>Hours studied now</label><input id="logH" type="number" min="0" step=".25" value="1"></div></div><div class="modal-actions"><button onclick="closeModal()">Cancel</button><button onclick="commitLog('${id}')">Log</button></div>`)}
+function commitLog(id){let h=Number(document.getElementById("logH").value||0);if(h<=0)return;let s=state.subjects.find(x=>x.id===id);s.studied+=h;state.sessions.push({id:crypto.randomUUID(),subjectId:id,hours:h,date:new Date().toISOString()});closeModal();save()}
+function deleteSubject(id){if(confirm("Remove this subject? Its study history remains in your backup but the subject leaves the tracker.")){state.subjects=state.subjects.filter(s=>s.id!==id);save()}}
+function subjectHTML(s){let r=remaining(s);return `<div class="subject"><div class="subject-top"><div><span class="subject-name">${esc(s.name)}</span><div class="chips">${s.priority?'<span class="chip priority">Priority</span>':''}<span class="chip">${pct(s)}%</span></div></div><b>${state.settings.showHours?r+"h":pct(s)+"%"}</b></div><div class="progress"><i style="width:${pct(s)}%"></i></div><div class="subject-meta"><span>${s.studied}h studied of ${s.hours}h</span><span>${r}h remaining</span></div><div class="actions" style="margin-top:9px"><button onclick="logHours('${s.id}')">+ Log hours</button><button onclick="openSubject('${s.id}')">Edit</button><button onclick="deleteSubject('${s.id}')">Remove</button></div></div>`}
+function renderSubjects(){let list=[...state.subjects].sort((a,b)=>(b.priority-a.priority)|| (pct(a)-pct(b)));document.getElementById("dashboardSubjects").innerHTML=list.length?list.slice(0,8).map(subjectHTML).join(""):"<p class='muted'>No subjects yet. Add one to start.</p>";document.getElementById("subjectsFull").innerHTML=list.length?list.map(subjectHTML).join(""):"<p class='muted'>No subjects yet.</p>"}
+function dayKey(d){return d.toISOString().slice(0,10)}
+function weekly(){let now=new Date(),arr=[];for(let i=6;i>=0;i--){let d=new Date(now);d.setHours(0,0,0,0);d.setDate(d.getDate()-i);let key=dayKey(d);let h=state.sessions.filter(x=>String(x.date).slice(0,10)===key).reduce((a,x)=>a+x.hours,0);arr.push({d,h})}return arr}
+function chartHTML(){let a=weekly(),max=Math.max(...a.map(x=>x.h),1);return a.map(x=>`<div class="bar" style="height:${Math.max(8,x.h/max*125)}px"><b>${x.h?x.h.toFixed(1).replace(".0",""):""}</b><span>${x.d.toLocaleDateString(undefined,{weekday:"short"}).slice(0,2)}</span></div>`).join("")}
+function renderProgress(){let planned=totalHours(),stud=totalStudied(),p=planned?Math.round(stud/planned*100):0;document.getElementById("overallPct").textContent=p+"%";document.getElementById("overallBar").style.width=p+"%";document.getElementById("sessionCount").textContent=state.sessions.length;document.getElementById("completedCount").textContent=state.subjects.filter(s=>remaining(s)<=0&&s.hours>0).length;document.getElementById("progressTable").innerHTML=`<table class="table"><tr><th>Subject</th><th>Studied</th><th>Remaining</th><th>Progress</th></tr>${state.subjects.map(s=>`<tr><td>${esc(s.name)}</td><td>${s.studied}h</td><td>${remaining(s)}h</td><td>${pct(s)}%</td></tr>`).join("")}</table>`;document.getElementById("progressChart").innerHTML=chartHTML()}
+function renderPins(){document.getElementById("pinsPreview").innerHTML=state.pins.length?state.pins.slice(0,4).map(p=>`<div style="padding:9px 0;border-bottom:1px solid var(--line)">“${esc(p.text)}”</div>`).join(""):"<p class='muted'>No saved advice yet.</p>";document.getElementById("board").innerHTML=state.notes.length?state.notes.map((n,i)=>`<div class="note"><button class="del" onclick="deleteNote('${n.id}')">×</button>${esc(n.text)}<small>${esc(n.author||"For future me")}</small></div>`).join(""):"<div class='note'>Your corkboard is waiting for your first note. ✨<small>For future you</small></div>"}
+function renderCountdown(){let diff=new Date(state.pleDate)-new Date();if(diff<=0){document.getElementById("countdown").textContent="PLE time!";return}let sec=Math.floor(diff/1000),d=Math.floor(sec/86400);sec%=86400;let h=Math.floor(sec/3600);sec%=3600;let m=Math.floor(sec/60);sec%=60;document.getElementById("countdown").textContent=`${d}d ${String(h).padStart(2,"0")}h ${String(m).padStart(2,"0")}m ${String(sec).padStart(2,"0")}s`;document.getElementById("countdownDate").textContent=new Date(state.pleDate).toLocaleString()}
+function renderStats(){document.getElementById("totalStudied").textContent=totalStudied()+"h";document.getElementById("totalRemaining").textContent=state.subjects.reduce((a,s)=>a+remaining(s),0)+"h";document.getElementById("dashChart").innerHTML=chartHTML()}
+function renderChat(){let box=document.getElementById("messages");box.innerHTML=state.chat.length?state.chat.map(m=>`<div class="msg ${m.role}">${esc(m.text)}</div>`).join(""):"<div class='msg mate'>Hi! I'm your dashboard-side PLE-mate companion. For actual ChatGPT answers, use “Open ChatGPT”. When you want a dashboard change, ask ChatGPT to give you a PLE-mate change and apply it here.</div>";box.scrollTop=box.scrollHeight}
+function openChatGPT(){window.open("https://chatgpt.com/","_blank","noopener")}
+function openApply(){openModal(`<h2>Apply a PLE-mate change</h2><p class="muted">Paste one JSON change generated by ChatGPT. Example: <code>{"type":"ADD_SUBJECT","name":"Pathology","hours":40}</code></p><div class="form"><textarea id="changeInput" rows="7" placeholder='{"type":"LOG_STUDY_TIME","subject":"Surgery","hours":3}'></textarea></div><div class="modal-actions"><button onclick="closeModal()">Cancel</button><button onclick="applyChange()">Apply</button></div>`)}
+function applyChange(){let raw=document.getElementById("changeInput").value.trim();try{let a=JSON.parse(raw);if(Array.isArray(a))a.forEach(applyOne);else applyOne(a);closeModal();save();alert("PLE-mate change applied.");}catch(e){alert("That change is not valid JSON.")}}
+function applyOne(a){if(!a||!a.type)return;if(a.type==="ADD_SUBJECT"){state.subjects.push({id:crypto.randomUUID(),name:String(a.name),hours:Number(a.hours||0),studied:Number(a.studied||0),priority:!!a.priority})}
+else if(a.type==="SET_HOURS"){let s=findSubject(a.subject||a.name);if(s)s.hours=Number(a.hours||0)}
+else if(a.type==="LOG_STUDY_TIME"){let s=findSubject(a.subject||a.name);if(s){let h=Number(a.hours||0);s.studied+=h;state.sessions.push({id:crypto.randomUUID(),subjectId:s.id,hours:h,date:new Date().toISOString()})}}
+else if(a.type==="COMPLETE_SUBJECT"){let s=findSubject(a.subject||a.name);if(s)s.studied=s.hours}
+else if(a.type==="SET_PRIORITY"){let s=findSubject(a.subject||a.name);if(s)s.priority=!!a.priority}
+else if(a.type==="ADD_PIN"){state.pins.unshift({id:crypto.randomUUID(),text:String(a.text),date:new Date().toISOString()})}
+else if(a.type==="ADD_CORKBOARD_NOTE"){state.notes.unshift({id:crypto.randomUUID(),text:String(a.text),author:a.author||"PLE-mate"})}
+else if(a.type==="DELETE_WIDGET"){if(a.widget==="hours")state.settings.showHours=false}
+else if(a.type==="SHOW_HOURS"){state.settings.showHours=true}
+else if(a.type==="SORT_WEAKEST"){state.subjects.sort((x,y)=>pct(x)-pct(y))}
+}
+function findSubject(name){return state.subjects.find(s=>s.name.toLowerCase()===String(name).toLowerCase())}
+function openNote(){openModal(`<h2>Add corkboard note</h2><div class="form"><div><label>Note / quote</label><textarea id="noteText" rows="5"></textarea></div><div><label>Label</label><input id="noteAuthor" value="For future me"></div></div><div class="modal-actions"><button onclick="closeModal()">Cancel</button><button onclick="saveNote()">Pin it</button></div>`)}
+function saveNote(){let text=document.getElementById("noteText").value.trim();if(!text)return;state.notes.unshift({id:crypto.randomUUID(),text,author:document.getElementById("noteAuthor").value.trim()||"For future me"});closeModal();save()}
+function deleteNote(id){state.notes=state.notes.filter(n=>n.id!==id);save()}
+function openSettings(){openModal(`<h2>PLE date</h2><div class="form"><input id="pleDateInput" type="datetime-local" value="${state.pleDate}"></div><div class="modal-actions"><button onclick="closeModal()">Cancel</button><button onclick="state.pleDate=document.getElementById('pleDateInput').value;closeModal();save()">Save</button></div>`)}
+function exportData(){let blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="PLE-mate-backup.json";a.click();URL.revokeObjectURL(a.href)}
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.subjects||!x.sessions)throw 0;state=x;save();alert("Backup restored.")}catch{alert("That backup file is not a valid PLE-mate file.")}};r.readAsText(f)}
+function resetData(){if(confirm("Clear all PLE-mate data from this browser?")){localStorage.removeItem(KEY);location.reload()}}
+let calDate=new Date();
+function changeMonth(n){calDate.setMonth(calDate.getMonth()+n);renderCalendar()}
+function renderCalendar(){let y=calDate.getFullYear(),m=calDate.getMonth();document.getElementById("monthTitle").textContent=calDate.toLocaleDateString(undefined,{month:"long",year:"numeric"});let first=new Date(y,m,1),start=first.getDay(),days=new Date(y,m+1,0).getDate();let html=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(x=>`<div class="cal-head">${x}</div>`).join("");for(let i=0;i<start;i++)html+="<div class='day'></div>";for(let d=1;d<=days;d++){let date=new Date(y,m,d),key=dayKey(date),today=key===dayKey(new Date());let ev=state.events.filter(e=>e.date===key);html+=`<div class="day ${today?"today":""}"><div class="day-num">${d}</div>${ev.map(e=>`<div class="event">${esc(e.title)}</div>`).join("")}</div>`}document.getElementById("calendarGrid").innerHTML=html}
+function addEvent(){openModal(`<h2>Add calendar event</h2><div class="form"><div><label>Date</label><input id="evDate" type="date" value="${dayKey(new Date())}"></div><div><label>Event</label><input id="evTitle"></div></div><div class="modal-actions"><button onclick="closeModal()">Cancel</button><button onclick="saveEvent()">Save</button></div>`)}
+function saveEvent(){let title=document.getElementById("evTitle").value.trim();if(!title)return;state.events.push({id:crypto.randomUUID(),date:document.getElementById("evDate").value,title});closeModal();save()}
+function openCalendarImport(){openModal(`<h2>Import calendar (.ics)</h2><p class="muted">Choose an exported .ics file from Google Calendar. This static version parses basic all-day VEVENT entries locally.</p><input id="icsFile" type="file" accept=".ics,text/calendar" onchange="parseICS(event)"><div id="icsStatus" class="small" style="margin-top:10px"></div><div class="modal-actions"><button onclick="closeModal()">Done</button></div>`)}
+function parseICS(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{let text=r.result.replace(/\r/g,""),blocks=text.split("BEGIN:VEVENT").slice(1),added=0;blocks.forEach(b=>{let dm=b.match(/DTSTART(?:;[^:]*)?:(\d{8})/);let sm=b.match(/SUMMARY(?:;[^:]*)?:(.*)/);if(dm&&sm){let d=dm[1],date=d.slice(0,4)+"-"+d.slice(4,6)+"-"+d.slice(6,8);state.events.push({id:crypto.randomUUID(),date,title:sm[1].trim()});added++}});save();document.getElementById("icsStatus").textContent=`Imported ${added} all-day event(s).`};r.readAsText(f)}
+function renderAll(){renderSubjects();renderStats();renderProgress();renderPins();renderCountdown();renderChat();renderCalendar()}
+setInterval(renderCountdown,1000);
+if(location.hash&&document.getElementById(location.hash.slice(1)))go(location.hash.slice(1)); else renderAll();
+</script>
+</body>
+</html>
